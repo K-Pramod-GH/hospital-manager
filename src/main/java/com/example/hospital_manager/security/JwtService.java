@@ -30,21 +30,19 @@ public class JwtService {
         return claimsResolver.apply(claims);
     }
 
-    public String generateToken(UserDetails userDetails, String role) {
-        Map<String, Object> claims = new HashMap<>();
-        claims.put("role", role);
-        return createToken(claims, userDetails.getUsername());
-    }
+    public String generateToken(UserDetails userDetails) {
+    return generateToken(new HashMap<>(), userDetails);
+}
 
-    private String createToken(Map<String, Object> claims, String subject) {
-        return Jwts.builder()
-                .setClaims(claims)
-                .setSubject(subject)
-                .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + jwtExpiration))
-                .signWith(getSignInKey(), SignatureAlgorithm.HS384)
-                .compact();
-    }
+public String generateToken(Map<String, Object> extraClaims, UserDetails userDetails) {
+    return Jwts.builder()
+            .setClaims(extraClaims)
+            .setSubject(userDetails.getUsername())
+            .setIssuedAt(new Date(System.currentTimeMillis()))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 10)) // පැය 10ක්
+            .signWith(getSignInKey(), SignatureAlgorithm.HS256)
+            .compact();
+}
 
     public boolean isTokenValid(String token, UserDetails userDetails) {
         final String username = extractUsername(token);
