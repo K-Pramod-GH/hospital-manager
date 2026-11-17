@@ -6,5 +6,9 @@ import java.util.List;
 
 public interface PatientRepository extends JpaRepository<Patient, Long> {
 
-    List<Patient> findByNameContainingIgnoreCase(String name);
+    // Patient ගේ නම (full name) මත පදනම්ව search කිරීමට (case-insensitive ලෙස partial search කිරීමට ද පුළුවන)
+    List<Patient> findByFullNameContainingIgnoreCase(String name);
+
+    // Email එක හෝ phone එක මඟින් duplicate පරීක්ෂා කිරීමට අවශ්‍ය නම්
+    boolean existsByEmail(String email);
 }

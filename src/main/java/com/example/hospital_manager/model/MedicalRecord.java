@@ -1,8 +1,8 @@
-
 package com.example.hospital_manager.model;
 
 import jakarta.persistence.*;
 import lombok.*;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class MedicalRecord {
 
     @Id
@@ -25,12 +26,13 @@ public class MedicalRecord {
     @JoinColumn(name = "doctor_id", nullable = false)
     private AppUser doctor;
 
-    @Column(nullable = false, length = 2000)
+    @Column(nullable = false, length = 1000)
     private String diagnosis;
 
-    @Column(length = 2000)
+    @Column(nullable = false, length = 1000)
     private String prescription;
 
-    private LocalDateTime createdAt = LocalDateTime.now();
-}
+    @Column(nullable = false)
+    private LocalDateTime recordDate;
 
+}

@@ -1,38 +1,30 @@
-
 package com.example.hospital_manager.security;
 
 import com.example.hospital_manager.dto.ErrorResponse;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.http.MediaType;
-import org.springframework.stereotype.Component;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
 
-@Component
 public class ErrorResponseWriter {
 
-    private final ObjectMapper mapper = new ObjectMapper()
-            .findAndRegisterModules();
-
-    public void write(
-            HttpServletResponse response,
-            int status,
-            String message) throws IOException {
+    public static void writeError(HttpServletResponse response, int status, String error, String message, String path) throws IOException {
+        ErrorResponse errorResponse = new ErrorResponse(
+                LocalDateTime.now(),
+                status,
+                error,
+                message,
+                path
+        );
 
         response.setStatus(status);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
 
-        ErrorResponse error = new ErrorResponse(
-            LocalDateTime.now(),
-            status,
-            status == 401 ? "Unauthorized" : "Forbidden",
-            message,
-            ""
-        );
-
-        mapper.writeValue(response.getOutputStream(), error);
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.writeValue(response.getWriter(), errorResponse);
     }
 }
-
